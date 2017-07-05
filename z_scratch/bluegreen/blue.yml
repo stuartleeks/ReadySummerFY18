@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: hrmlrefresh
+  name: htmlrefresh
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: htmlrefresh
+  template:
+    metadata:
+      labels:
+        run: htmlrefresh
+    spec:
+      containers:
+      - image: stuartleeks/htmlrefresh:blue
+        imagePullPolicy: Always
+        name: htmlrefresh
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: htmlrefresh
+  name: htmlrefresh
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    run: htmlrefresh
+  sessionAffinity: None
+  type: LoadBalancer
+
