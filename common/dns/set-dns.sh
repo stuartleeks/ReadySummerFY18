@@ -1,5 +1,8 @@
 #!/bin/bash
 
+SCRIPT=$(readlink -f $0)
+BASE_DIR=`dirname ${SCRIPT}`
+
 DOMAIN=""
 SUBDOMAIN=""
 SERVICE_NAME=""
@@ -28,6 +31,7 @@ do
             shift 2
             ;;
         *)
+            echo "Unexpected '$1'"
             show_usage
             exit 1
             ;;
@@ -58,14 +62,14 @@ fi
 while [ 1 -eq 1 ]; do
     ipAddress=$(kubectl get service $SERVICE_NAME -o json | jq -r '.status.loadBalancer.ingress[0].ip')
 
-    echo $ipAddress
     if [[ $ipAddress == "null" ]]; then
         # no record yet - nothing to do
         echo "waiting..."
     else
         # existing record - delete it
         echo "Found IP Address: $ipAddress. Setting DNS for $SUBDOMAIN.$DOMAIN"
-        ./set-a-record.sh --zone $DOMAIN --name $SUBDOMAIN --ip $ipAddress
+        $BASE_DIR/set-a-record.sh --zone $DOMAIN --name $SUBDOMAIN --ip $ipAddress
+        echo
         exit 0
     fi
 
