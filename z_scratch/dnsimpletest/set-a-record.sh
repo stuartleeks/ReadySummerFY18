@@ -2,22 +2,60 @@
 
 # expects the following env vars to be set: DNSIMPLE_TOKEN, DNSIMPLE_ACCOUNT
 
-ZONE=faux.ninja
-NAME=apitest
-IP=52.169.226.141
+ZONE=""
+NAME=""
+IP=""
 
-# curl    -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
-#         -H 'Accept: application/json' \
-#         "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$ZONE/records"
+function show_usage(){
+    echo "set-a-record"
+    echo
+    echo -e "\t--zone | -z\tSpecify the zone (e.g. example.com)"
+    echo -e "\t--name | -n\tSpecify the name (e.g. mysubdomain)"
+    echo -e "\t--ip | -i\tSpecify the ip address"
+}
 
-# curl    -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
-#         -H 'Accept: application/json' \
-#         -H 'Content-Type: application/json' \
-#         -X POST \
-#         -d '{ "name": "apitest", "type": "A", "content": "52.169.226.141", "ttl": 60 }' \ # TODO - parameterise NAME!!
-#         "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$ZONE/records"
+while [[ $# -gt 0 ]]
+do
+    case "$1" in 
+        --zone | -z)
+            ZONE="$2"
+            shift 2
+            ;;
+        --name | -n)
+            NAME="$2"
+            shift 2
+            ;;
+        --ip | -i)
+            IP="$2"
+            shift 2
+            ;;
+        *)
+            show_usage
+            exit 1
+            ;;
+    esac
+done
 
+if [ -z $ZONE ]; then
+    echo "zone not specified"
+    echo
+    show_usage
+    exit 1
+fi
 
+if [ -z $NAME ]; then
+    echo "name not specified"
+    echo
+    show_usage
+    exit 1
+fi
+
+if [ -z $IP ]; then
+    echo "ip address not specified"
+    echo
+    show_usage
+    exit 1
+fi
 
 record_id=$(curl -s   -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
         -H 'Accept: application/json' \
