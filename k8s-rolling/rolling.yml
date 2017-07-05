@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: rolling
+  name: rolling
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      run: rolling
+  template:
+    metadata:
+      labels:
+        run: rolling
+    spec:
+      containers:
+      - image: stuartleeks/htmlrefresh:blue
+        imagePullPolicy: Always
+        name: rolling
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: rolling
+  name: rolling
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    run: rolling
+  sessionAffinity: None
+  type: LoadBalancer
+
