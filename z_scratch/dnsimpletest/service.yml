@@ -1,0 +1,42 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: dnsimpletest
+  name: dnsimpletest
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      run: dnsimpletest
+  template:
+    metadata:
+      labels:
+        run: dnsimpletest
+    spec:
+      containers:
+      - image: stuartleeks/htmlrefresh:blue
+        imagePullPolicy: Always
+        name: dnsimpletest
+        ports:
+        - containerPort: 5000
+          protocol: TCP
+      restartPolicy: Always
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    run: dnsimpletest
+  name: dnsimpletest
+spec:
+  ports:
+  - port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    run: dnsimpletest
+  sessionAffinity: None
+  type: LoadBalancer
+
