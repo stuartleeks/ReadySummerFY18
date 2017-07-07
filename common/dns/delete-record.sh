@@ -2,25 +2,25 @@
 
 # expects the following env vars to be set: DNSIMPLE_TOKEN, DNSIMPLE_ACCOUNT
 
-ZONE=""
-NAME=""
+DOMAIN=""
+SUBDOMAIN=""
 
 function show_usage(){
     echo "set-a-record"
     echo
-    echo -e "\t--zone | -z\tSpecify the zone (e.g. example.com)"
-    echo -e "\t--name | -n\tSpecify the name (e.g. mysubdomain)"
+    echo -e "\t--domain\tSpecify the domain name"
+    echo -e "\t--subdomain\tSpecify the subdomain"
 }
 
 while [[ $# -gt 0 ]]
 do
     case "$1" in 
-        --zone | -z)
-            ZONE="$2"
+        --domain)
+            DOMAIN="$2"
             shift 2
             ;;
-        --name | -n)
-            NAME="$2"
+        --subdomain)
+            SUBDOMAIN="$2"
             shift 2
             ;;
         *)
@@ -30,15 +30,15 @@ do
     esac
 done
 
-if [ -z $ZONE ]; then
-    echo "zone not specified"
+if [ -z $DOMAIN ]; then
+    echo "domain not specified"
     echo
     show_usage
     exit 1
 fi
 
-if [ -z $NAME ]; then
-    echo "name not specified"
+if [ -z $SUBDOMAIN ]; then
+    echo "subdomain not specified"
     echo
     show_usage
     exit 1
@@ -46,7 +46,7 @@ fi
 
 record_id=$(curl -s   -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
         -H 'Accept: application/json' \
-        "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$ZONE/records?name=$NAME" \
+        "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$DOMAIN/records?name=$SUBDOMAIN" \
         | jq '.data[0].id')
 
 if [[ $record_id == "null" ]]; then
@@ -59,6 +59,6 @@ else
             -H 'Accept: application/json' \
             -H 'Content-Type: application/json' \
             -X DELETE \
-            "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$ZONE/records/$record_id"
+            "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$DOMAIN/records/$record_id"
 fi
 

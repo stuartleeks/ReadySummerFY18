@@ -68,7 +68,7 @@ while [ 1 -eq 1 ]; do
     else
         # existing record - delete it
         echo "Found IP Address: $ipAddress. Setting DNS for $SUBDOMAIN.$DOMAIN"
-        $BASE_DIR/set-a-record.sh --zone $DOMAIN --name $SUBDOMAIN --ip $ipAddress
+        $BASE_DIR/set-a-record.sh --domain $DOMAIN --subdomain $SUBDOMAIN --ip $ipAddress
         echo
         exit 0
     fi
