@@ -1,0 +1,11 @@
+name: bluegreen/80
+kind: gateway
+port: '80'
+virtual_hosts:
+- 80.bluegreen.vamp
+- bluegreen.faux.ninja
+routes:
+  bluegreen/bluegreen-blue/webport:
+    weight: 50%
+  bluegreen/bluegreen-green/webport:
+    weight: 50%
