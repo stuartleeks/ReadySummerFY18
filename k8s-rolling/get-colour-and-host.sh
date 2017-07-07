@@ -2,7 +2,7 @@
 
 # update the URL
 
-url=http://13.79.164.72/
+url=http://rolling.faux.ninja/
 
 blue="\e[1;34m"
 green="\e[1;32m"
