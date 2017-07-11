@@ -15,7 +15,7 @@ while [ 1 -eq 1 ]; do
     host=$(grep -Po "(?<=>)(?:[a-z0-9-]*)(?=</body)"  /tmp/bluegreen.html)
 
     ansiColour=${!colour}
-    echo -e "$ansiColourHost: $host   Colour: $colour$no_colour"
+    echo -e "${ansiColour}Host: $host   Colour: $colour$no_colour"
     sleep 0.5
 done
 
