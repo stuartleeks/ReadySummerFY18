@@ -29,11 +29,11 @@ done
 function dump_pods(){
     # $1 is clear to clear screen
 
-    IFS=$'\n'
-    lines=$(kubectl get pod -l io.vamp.deployment=bluegreen -o json | jq -r '.items | .[] | [.metadata.name, .spec.containers[0].image, (.status.containerStatuses[0].state | keys | .[])] | @tsv' )
+    lines=$(kubectl get pod -l "io.vamp.deployment in (demo-blue,demo-green)" -o json | jq -r '.items | .[] | [.metadata.name, .spec.containers[0].image, (.status.containerStatuses[0].state | keys | .[])] | @tsv' )
     if [ "$1" == clear ]; then
         clear
     fi
+    IFS=$'\n'
     for pod in $lines
     do
         colour=$(echo $pod | grep -Po "(?<=:)(?:[a-z]*)")

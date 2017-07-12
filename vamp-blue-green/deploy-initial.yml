@@ -1,16 +1,10 @@
 kind: deployment
-name: bluegreen
-gateways:
-  80: 
-    virtual_hosts: [
-      "bluegreen.faux.ninja"
-    ]
-    routes: bluegreen-blue/webport
+name: demo-blue
 clusters:
-  bluegreen-blue:
+  htmlrefresh:
     services:
       breed:
-        name: bluegreen:blue
+        name: demo-blue
         deployable: stuartleeks/htmlrefresh:blue
         environment_variables:
           HTML_REFRESH_FONTSIZE: 10vw
@@ -20,3 +14,12 @@ clusters:
         cpu: 0.5       
         memory: 256MB
         instances: 3
+
+
+---
+name: demo/80
+kind: gateway
+port: '80'
+virtual_hosts:
+- bluegreen.faux.ninja
+routes:  demo-blue/htmlrefresh/webport

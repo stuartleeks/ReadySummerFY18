@@ -1,37 +1,10 @@
-# kind: deployment
-# name: bluegreen
-# gateways:
-#   80: 
-#     virtual_hosts: [
-#       "bluegreen.faux.ninja"
-#     ]
-#     routes: 
-#       bluegreen-blue/webport:
-#         weight: 100%
-#       bluegreen-green/webport:
-#         weight: 0%
-# clusters:
-#   bluegreen-green:
-#     services:
-#       breed:
-#         name: bluegreen:green
-#         deployable: stuartleeks/htmlrefresh:green
-#         environment_variables:
-#           HTML_REFRESH_FONTSIZE: 10vw
-#         ports:
-#           webport: 5000/http
-#       scale:
-#         cpu: 0.5       
-#         memory: 256MB
-#         instances: 3
-
 kind: deployment
-name: bluegreen
+name: demo-green
 clusters:
-  bluegreen-green:
+  htmlrefresh:
     services:
       breed:
-        name: bluegreen:green
+        name: demo-green
         deployable: stuartleeks/htmlrefresh:green
         environment_variables:
           HTML_REFRESH_FONTSIZE: 10vw
@@ -42,14 +15,14 @@ clusters:
         memory: 256MB
         instances: 3
 ---
-name: bluegreen/80
+name: demo/80
 kind: gateway
 port: '80'
 virtual_hosts:
 - 80.bluegreen.vamp
 - bluegreen.faux.ninja
 routes:
-  bluegreen/bluegreen-blue/webport:
+  demo-blue/htmlrefresh/webport:
     weight: 100%
-  bluegreen/bluegreen-green/webport:
+  demo-green/htmlrefresh/webport:
     weight: 0%
