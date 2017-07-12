@@ -18,6 +18,11 @@ do
             REFRESH=refresh
             shift 1
             ;;
+        *)
+            echo "Unexpected '$1'"
+            show_usage
+            exit 1
+            ;;
     esac
 done
 
