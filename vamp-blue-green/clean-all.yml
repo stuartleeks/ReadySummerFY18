@@ -1,0 +1,44 @@
+---
+kind: deployment
+name: bluegreen
+clusters:
+  bluegreen-blue:
+    services:
+      breed:
+        name: bluegreen:blue
+        deployable: stuartleeks/htmlrefresh:blue
+        environment_variables:
+          HTML_REFRESH_FONTSIZE: 10vw
+        ports:
+          webport: 5000/http
+      scale:
+        cpu: 0.5       
+        memory: 256MB
+        instances: 3
+  bluegreen-green:
+    services:
+      breed:
+        name: bluegreen:green
+        deployable: stuartleeks/htmlrefresh:green
+        environment_variables:
+          HTML_REFRESH_FONTSIZE: 10vw
+        ports:
+          webport: 5000/http
+      scale:
+        cpu: 0.5       
+        memory: 256MB
+        instances: 3
+
+---
+kind: breed
+name: bluegreen:blue
+---
+kind: breed
+name: bluegreen:green
+
+---
+kind: gateway
+name: bluegreen/bluegreen-green/webport
+---
+kind: gateway
+name: bluegreen/80
