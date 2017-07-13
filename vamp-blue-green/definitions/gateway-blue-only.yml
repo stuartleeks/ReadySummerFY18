@@ -1,0 +1,9 @@
+name: demo/80
+kind: gateway
+port: '80'
+virtual_hosts:
+- 80.bluegreen.vamp
+- bluegreen.faux.ninja
+routes:
+  demo-blue/htmlrefresh/webport:
+    weight: 100%
