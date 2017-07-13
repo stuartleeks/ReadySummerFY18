@@ -1,0 +1,16 @@
+---
+kind: deployment
+name: demo-green
+clusters:
+  htmlrefresh:
+    services:
+      breed:
+        name: demo-green
+        deployable: stuartleeks/htmlrefresh:green
+
+---
+kind: breed
+name: demo-green
+---
+kind: gateway
+name: demo-green/htmlrefresh/webport
