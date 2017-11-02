@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_URL="http://vamp.azure.faux.ninja:8080"
+BASE_URL="http://vamp.$READY_DOMAIN_NAME:8080"
 DEPLOYMENT_FILE=""
 
 function show_usage(){
@@ -48,8 +48,11 @@ fi
 
 # see vamp runner recipes for examples
 
+# substitute env vars in yaml file before sending to VAMP
+envsubst < $DEPLOYMENT_FILE  > tmp/deploy.yml
+
 curl    -X DELETE \
         -H 'Content-Type: application/x-yaml' \
         -H 'Accept: application/x-yaml' \
-        --data-binary @$DEPLOYMENT_FILE \
+        --data-binary @tmp/deploy.yml \
         "$BASE_URL/api/v1/"

@@ -2,7 +2,7 @@
 
 # update the URL
 
-url=http://rolling.faux.ninja/
+url=http://rolling.$READY_DOMAIN_NAME/
 
 blue="\e[1;34m"
 green="\e[1;32m"

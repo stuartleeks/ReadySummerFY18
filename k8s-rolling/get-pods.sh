@@ -1,4 +1,8 @@
 #!/bin/bash
+
+SCRIPT=$(readlink -f $0)
+BASE_DIR=`dirname ${SCRIPT}`
+
 blue="\e[1;34m"
 green="\e[1;32m"
 no_colour="\e[1;0m"
@@ -26,36 +30,15 @@ do
     esac
 done
 
-function dump_pods(){
-    # $1 is clear to clear screen
-
+if [ "$REFRESH" == refresh ]; then
+    watch --color --interval 0.5 $BASE_DIR/get-pods.sh
+else
     IFS=$'\n'
     lines=$(kubectl get pod -l run=rolling -o json | jq -r '.items | .[] | [.metadata.name, .spec.containers[0].image, (.status.containerStatuses[0].state | keys | .[])] | @tsv' )
-    if [ "$1" == clear ]; then
-        clear
-    fi
     for pod in $lines
     do
         colour=$(echo $pod | grep -Po "(?<=:)(?:[a-z]*)")
         ansiColour=${!colour}
         echo -e "$ansiColour$pod$no_colour"
     done
-
-    # IFS=$'\n'
-    # for pod in $(kubectl get pod -l run=rolling -o json | jq -r '.items | .[] | [.metadata.name, .spec.containers[0].image, (.status.containerStatuses[0].state | keys | .[])] | @tsv' )
-    # do
-    #     colour=$(echo $pod | grep -Po "(?<=:)(?:[a-z]*)")
-    #     ansiColour=${!colour}
-    #     echo -e "$ansiColour$pod$no_colour"
-    # done
-}
-
-
-if [ "$REFRESH" == refresh ]; then
-    while [ 1 -eq 1 ]; do
-        dump_pods clear
-        sleep 0.5s
-    done
-else
-    dump_pods
 fi

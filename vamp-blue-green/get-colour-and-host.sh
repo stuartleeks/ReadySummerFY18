@@ -2,7 +2,7 @@
 
 # update the URL
 
-url=http://bluegreen.faux.ninja/
+url=http://bluegreen.$READY_DOMAIN_NAME/
 
 blue="\e[1;34m"
 green="\e[1;32m"

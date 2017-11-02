@@ -21,5 +21,5 @@ name: demo/80
 kind: gateway
 port: '80'
 virtual_hosts:
-- bluegreen.faux.ninja
+- bluegreen.$READY_DOMAIN_NAME
 routes:  demo-blue/htmlrefresh/webport

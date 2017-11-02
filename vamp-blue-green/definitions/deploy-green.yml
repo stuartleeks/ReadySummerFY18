@@ -20,7 +20,7 @@ kind: gateway
 port: '80'
 virtual_hosts:
 - 80.bluegreen.vamp
-- bluegreen.faux.ninja
+- bluegreen.$READY_DOMAIN_NAME
 routes:
   demo-blue/htmlrefresh/webport:
     weight: 100%
