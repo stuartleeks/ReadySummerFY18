@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# expects the following env vars to be set: AZDNS_RESOURCE_GROUP
+# expects the following env vars to be set: DNSIMPLE_TOKEN, DNSIMPLE_ACCOUNT
 
 DOMAIN=""
 SUBDOMAIN=""
@@ -44,13 +44,21 @@ if [ -z $SUBDOMAIN ]; then
     exit 1
 fi
 
-current_ip_address=$(az network dns record-set  a show --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --query "arecords[0].ipv4Address" --output tsv)
+record_id=$(curl -s   -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
+        -H 'Accept: application/json' \
+        "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$DOMAIN/records?name=$SUBDOMAIN" \
+        | jq '.data[0].id')
 
-if [[ $current_ip_address == "" ]]; then
+if [[ $record_id == "null" ]]; then
     # no record yet - nothing to do
     echo "not found"
 else
     # existing record - delete it
-    echo "deleting $SUBDOMAIN.$DOMAIN..."
-    az network dns record-set a delete --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --yes
+    echo "deleting $record_id..."
+    curl    -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
+            -H 'Accept: application/json' \
+            -H 'Content-Type: application/json' \
+            -X DELETE \
+            "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$DOMAIN/records/$record_id"
 fi
+

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_URL="http://vamp.faux.ninja:8080"
+BASE_URL="http://vamp.azure.faux.ninja:8080"
 DEPLOYMENT_FILE=""
 
 function show_usage(){

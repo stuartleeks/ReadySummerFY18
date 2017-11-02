@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# expects the following env vars to be set: DNSIMPLE_TOKEN, DNSIMPLE_ACCOUNT
+# expects the following env vars to be set: AZDNS_RESOURCE_GROUP
 
 DOMAIN=""
 SUBDOMAIN=""
@@ -57,28 +57,27 @@ if [ -z $IP ]; then
     exit 1
 fi
 
-record_id=$(curl -s   -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
-        -H 'Accept: application/json' \
-        "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$DOMAIN/records?name=$SUBDOMAIN" \
-        | jq '.data[0].id')
+if [ -z $AZDNS_RESOURCE_GROUP ]; then
+    echo "AZDNS_RESOURCE_GROUP variable not set"
+    exit 1
+fi
 
-if [[ $record_id == "null" ]]; then
+current_ip_address=$(az network dns record-set  a show --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --query "arecords[0].ipv4Address" --output tsv)
+
+if [[ $current_ip_address == $IP ]]; then
     # no record yet - create one
-    echo "creating..."
-    curl    -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
-            -H 'Accept: application/json' \
-            -H 'Content-Type: application/json' \
-            -X POST \
-            -d '{ "name": "'$SUBDOMAIN'", "type": "A", "content": "'$IP'", "ttl": 60 }' \
-            "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$DOMAIN/records"
+    echo "Record already set to correct value"
 else
-    # existing record - update it
-    echo "updating $record_id..."
-    curl    -H "Authorization: Bearer $DNSIMPLE_TOKEN" \
-            -H 'Accept: application/json' \
-            -H 'Content-Type: application/json' \
-            -X PATCH \
-            -d '{ "content": "'$IP'" }' \
-            "https://api.dnsimple.com/v2/$DNSIMPLE_ACCOUNT/zones/$DOMAIN/records/$record_id"
+    if [[ $current_ip_address == "" ]]; then
+        # no record yet - create one
+        echo "creating $SUBDOMAIN.$DOMAIN..."
+        az network dns record-set a create --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --ttl 60 > null
+        echo "setting IP address..."
+        az network dns record-set a add-record --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --record-set-name $SUBDOMAIN --ipv4-address $IP > null
+    else
+        # existing record - update it
+        echo "updating $SUBDOMAIN.$DOMAIN..."
+        az network dns record-set a update --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --set arecords[0].ipv4Address=$IP > null
+    fi
 fi
 
