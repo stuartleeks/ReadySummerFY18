@@ -71,13 +71,13 @@ else
     if [[ $current_ip_address == "" ]]; then
         # no record yet - create one
         echo "creating $SUBDOMAIN.$DOMAIN..."
-        az network dns record-set a create --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --ttl 60 > null
+        az network dns record-set a create --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --ttl 60 > /dev/null
         echo "setting IP address..."
-        az network dns record-set a add-record --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --record-set-name $SUBDOMAIN --ipv4-address $IP > null
+        az network dns record-set a add-record --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --record-set-name $SUBDOMAIN --ipv4-address $IP > /dev/null
     else
         # existing record - update it
         echo "updating $SUBDOMAIN.$DOMAIN..."
-        az network dns record-set a update --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --set arecords[0].ipv4Address=$IP > null
+        az network dns record-set a update --resource-group $AZDNS_RESOURCE_GROUP --zone-name $DOMAIN --name $SUBDOMAIN --set arecords[0].ipv4Address=$IP > /dev/null
     fi
 fi
 
