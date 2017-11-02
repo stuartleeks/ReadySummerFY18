@@ -47,10 +47,11 @@ The VAMP quickstart installer can be downloaded from [here](https://github.com/m
 To install VAMP
 
 ```bash
+# install vamp
 ./vamp_kube_quickstart.
 
-# wait for the IP Address for the vamp service to be set (TODO - script this with a wait)
-./common/dns/set-a-record.sh --domain $READY_DOMAIN_NAME --subdomain vamp --ip $(kubectl get service vamp -o jsonpath={.status.loadBalancer.ingress[0].ip}) 
+# wire up dns
+./common/dns/set-dns.sh --domain $READY_DOMAIN_NAME --subdomain vamp --service-name vamp
 ```
 
 ## Demo setup
