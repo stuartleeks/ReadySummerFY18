@@ -23,6 +23,7 @@ do
     case "$1" in 
         --cookies)
             COOKIES=cookies
+            echo "using cookie jar..."
             shift 1
             ;;
         *)
@@ -37,6 +38,7 @@ rm -f /tmp/bluegreencookies.txt
 
 while [ 1 -eq 1 ]; do
     if [ "$COOKIES" == cookies ]; then
+            echo "using cookie jar..."
         curl $url -i -s -b /tmp/bluegreencookies.txt --cookie-jar /tmp/bluegreencookies.txt -o /tmp/bluegreen.html
     else
         curl $url -i -s -o /tmp/bluegreen.html
