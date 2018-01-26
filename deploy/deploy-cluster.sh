@@ -12,6 +12,7 @@ LOCATION=""
 CLUSTER_NAME=""
 SSH_KEY=""
 ADMIN_USERNAME=""
+BASE_DOMAIN=""
 
 function show_usage(){
     echo "deploy-cluster"
@@ -21,6 +22,7 @@ function show_usage(){
     echo -e "\t--cluster-name\tThe name of the cluster to deploy"
     echo -e "\t--ssh-key\tThe ssh key to use"
     echo -e "\t--admin-username\tThe administrator user name for the cluster"
+    echo -e "\t--base-domain\tThe base domain name for dns entries (optional)"
 }
 
 while [[ $# -gt 0 ]]
@@ -44,6 +46,10 @@ do
             ;;
         --admin-username)
             ADMIN_USERNAME="$2"
+            shift 2
+            ;;
+        --base-domain)
+            BASE_DOMAIN="$2"
             shift 2
             ;;
         *)
@@ -120,5 +126,48 @@ else
     else
         echo "Error - exiting"
         exit 1
+    fi
+fi
+
+#
+# Get the cluster credentials
+#
+echo "Setting kubectl credentials..."
+az aks get-credentials --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME
+if [ $? -eq 0 ]; then
+    echo "kubectl credentials set"
+else
+    echo "Error - exiting"
+    exit 1
+fi
+
+#
+# Deploy VAMP
+#
+kubectl get service vamp > /dev/null 2>&1
+if [ $? -eq 0 ]; then
+    echo "VAMP installed"
+else
+    echo "Installing VAMP..."
+    $BASE_DIR/../dependencies/vamp/vamp_kube_quickstart.0.9.5.6.sh
+    if [ $? -eq 0 ]; then
+        echo "VAMP installed"
+    else
+        echo "Error - exiting"
+        exit 1
+    fi
+
+    # Set dns for vamp.<suffix>
+    if [ ! -z $BASE_DOMAIN ]; then
+        echo "Setting dns entry for VAMP..."
+        $BASE_DIR/../common/dns/set-dns.sh --domain $BASE_DOMAIN --subdomain vamp --service-name vamp
+        if [ $? -eq 0 ]; then
+            echo "VAMP DNS set (vamp.$BASE_DOMAIN)"
+        else
+            echo "Error - exiting"
+            exit 1
+        fi
+    else
+        echo "Skipping DNS config for VAMP"
     fi
 fi
