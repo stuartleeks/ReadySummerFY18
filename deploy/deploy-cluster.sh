@@ -95,6 +95,10 @@ if [ -z $ADMIN_USERNAME ]; then
 fi
 
 
+if [ -z $BASE_DOMAIN ]; then
+    BASE_DOMAIN=$DEMO_DOMAIN_NAME # might still be empty, but nothing lost!
+fi
+
 #
 # Create the resource group
 #
