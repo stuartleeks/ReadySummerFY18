@@ -1,6 +1,6 @@
 #!/bin/bash
 
-BASE_URL="http://vamp.$READY_DOMAIN_NAME:8080"
+BASE_URL="http://vamp.$DEMO_DOMAIN_NAME:8080"
 DEPLOYMENT_FILE=""
 
 function show_usage(){

@@ -3,7 +3,7 @@ kind: gateway
 port: '80'
 virtual_hosts:
 - 80.bluegreen.vamp
-- bluegreen.$READY_DOMAIN_NAME
+- bluegreen.$DEMO_DOMAIN_NAME
 routes:
   demo-blue/htmlrefresh/webport:
     weight: 100%

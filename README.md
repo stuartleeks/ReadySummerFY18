@@ -17,42 +17,29 @@ Then set up some environment variables for the later scripts
 
 ```bash
 export AZDNS_RESOURCE_GROUP=dnstest
-export READY_DOMAIN_NAME=azure.faux.ninja
+export DEMO_DOMAIN_NAME=azure.faux.ninja
 ```
 
+### Deploy a cluster
+Run the `deploy-cluster.sh` script, e.g.:
 
-
-
-### Create a k8s cluster
-
-```bash
-# create a resource group
-az group create --name mydemos --location ukwest
-
-# create the managed kubernetes cluster
-# run az aks --help to see other options (kubernetes version, agent VM sku, SSH key, ...)
-az aks create --resource-group mydemos --name democluster --agent-count 4
-
-# setup up kubernetes credentials for kubectl
-az aks get-credentials  --resource-group mydemos --name democluster
-
-# verify kubectl connection
-kubectl cluster-info
+```
+    deploy/deploy-cluster.sh \
+            --resource-group readyprep \
+            --location westeurope \
+            --cluster-name readyprep \
+            --ssh-key ~/.ssh/acs-stuart.pub \
+            --admin-username stuart \
+            --base-domain azure.faux.ninja
 ```
 
-### Deploy VAMP
+The deploy script:
+* Creates a resource group
+* Creates an AKS deployment
+* Deploys VAMP
+* Sets up the DNS for vamp.base_domain
 
-The VAMP quickstart installer can be downloaded from [here](https://github.com/magneticio/vamp.io/blob/master/static/res/v0.9.5/vamp_kube_quickstart.sh).
 
-To install VAMP
-
-```bash
-# install vamp
-./vamp_kube_quickstart.
-
-# wire up dns
-./common/dns/set-dns.sh --domain $READY_DOMAIN_NAME --subdomain vamp --service-name vamp
-```
 
 ## Demo setup
 
@@ -63,7 +50,7 @@ To install VAMP
 ./k8s-rolling/deploy-initial.sh 
 
 # wire up dns
-./common/dns/set-dns.sh --domain $READY_DOMAIN_NAME --subdomain rolling --service-name rolling
+./common/dns/set-dns.sh --domain $DEMO_DOMAIN_NAME --subdomain rolling --service-name rolling
 ```
 
 ###  vamp-blue-green
@@ -73,5 +60,5 @@ To install VAMP
 ./vamp-blue-green/deploy-initial.sh
 
 # wire up dns 
-./vamp-blue-green/set-dns-for-gateway.sh --domain $READY_DOMAIN_NAME --subdomain bluegreen --gateway-name demo_80 
+./vamp-blue-green/set-dns-for-gateway.sh --domain $DEMO_DOMAIN_NAME --subdomain bluegreen --gateway-name demo_80 
 ```
