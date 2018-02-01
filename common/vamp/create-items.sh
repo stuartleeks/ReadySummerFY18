@@ -3,6 +3,9 @@
 BASE_URL="http://vamp.$DEMO_DOMAIN_NAME:8080"
 DEPLOYMENT_FILE=""
 
+SCRIPT=$(readlink -f $0)
+BASE_DIR=`dirname ${SCRIPT}`
+
 function show_usage(){
     echo "create-items"
     echo
@@ -48,12 +51,17 @@ fi
 
 # see vamp runner recipes for examples
 
+TEMP_DIR=$BASE_DIR/../../tmp
+if [ ! -d "$TEMP_DIR" ]; then
+    mkdir $TEMP_DIR
+fi
+
 # substitute env vars in yaml file before sending to VAMP
-envsubst < $DEPLOYMENT_FILE  > tmp/deploy.yml
+envsubst < $DEPLOYMENT_FILE  > $TEMP_DIR/deploy.yml
 
 
 curl    -X PUT \
         -H 'Content-Type: application/x-yaml' \
         -H 'Accept: application/x-yaml' \
-        --data-binary @tmp/deploy.yml \
+        --data-binary @$TEMP_DIR/deploy.yml \
         "$BASE_URL/api/v1/"
