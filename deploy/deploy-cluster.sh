@@ -124,7 +124,7 @@ if [ $? -eq 0 ]; then
     echo "Cluster $CLUSTER_NAME exists"
 else
     echo "Cluster $CLUSTER_NAME not found. Creating..."
-    az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --location $LOCATION --dns-name $CLUSTER_NAME --ssh-key-value $SSH_KEY --admin-username $ADMIN_USERNAME
+    az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --location $LOCATION --dns-name $CLUSTER_NAME --ssh-key-value $SSH_KEY --admin-username $ADMIN_USERNAME --node-count 5
     if [ $? -eq 0 ]; then
         echo "Cluster created"
     else
