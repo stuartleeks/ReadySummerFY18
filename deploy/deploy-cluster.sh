@@ -124,7 +124,7 @@ if [ $? -eq 0 ]; then
     echo "Cluster $CLUSTER_NAME exists"
 else
     echo "Cluster $CLUSTER_NAME not found. Creating..."
-    az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --location $LOCATION --dns-name $CLUSTER_NAME --ssh-key-value $SSH_KEY --admin-username $ADMIN_USERNAME --node-count 5
+    az aks create --resource-group $RESOURCE_GROUP --name $CLUSTER_NAME --location $LOCATION --dns-name $CLUSTER_NAME --ssh-key-value $SSH_KEY --admin-username $ADMIN_USERNAME --node-count 5 --node-vm-size Standard_A2_v2
     if [ $? -eq 0 ]; then
         echo "Cluster created"
     else
@@ -160,18 +160,18 @@ else
         echo "Error - exiting"
         exit 1
     fi
+fi
 
-    # Set dns for vamp.<suffix>
-    if [ ! -z $BASE_DOMAIN ]; then
-        echo "Setting dns entry for VAMP..."
-        $BASE_DIR/../common/dns/set-dns.sh --domain $BASE_DOMAIN --subdomain vamp --service-name vamp
-        if [ $? -eq 0 ]; then
-            echo "VAMP DNS set (vamp.$BASE_DOMAIN)"
-        else
-            echo "Error - exiting"
-            exit 1
-        fi
+# Set dns for vamp.<suffix>
+if [ ! -z $BASE_DOMAIN ]; then
+    echo "Setting dns entry for VAMP..."
+    $BASE_DIR/../common/dns/set-dns.sh --domain $BASE_DOMAIN --subdomain vamp --service-name vamp
+    if [ $? -eq 0 ]; then
+        echo "VAMP DNS set (vamp.$BASE_DOMAIN)"
     else
-        echo "Skipping DNS config for VAMP"
+        echo "Error - exiting"
+        exit 1
     fi
+else
+    echo "Skipping DNS config for VAMP"
 fi
