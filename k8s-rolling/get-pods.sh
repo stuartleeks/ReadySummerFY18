@@ -7,19 +7,19 @@ blue="\e[1;34m"
 green="\e[1;32m"
 no_colour="\e[1;0m"
 
-REFRESH=false
+REFRESH=refresh
 
 function show_usage(){
     echo "get-pods"
     echo
-    echo -e "\t--refresh\tkeep querying and re-displaying"
+    echo -e "\t--no-refresh\tjust query once"
 }
 
 while [[ $# -gt 0 ]]
 do
     case "$1" in 
-        --refresh)
-            REFRESH=refresh
+        --no-refresh)
+            REFRESH=false
             shift 1
             ;;
         *)
@@ -31,7 +31,7 @@ do
 done
 
 if [ "$REFRESH" == refresh ]; then
-    watch --color --interval 0.5 $BASE_DIR/get-pods.sh
+    watch --color --interval 0.5 $BASE_DIR/get-pods.sh --no-refresh
 else
     IFS=$'\n'
     lines=$(kubectl get pod -l run=rolling -o json | jq -r '.items | .[] | [.metadata.name, .spec.containers[0].image, (.status.containerStatuses[0].state | keys | .[])] | @tsv' )
